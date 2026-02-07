@@ -1,7 +1,13 @@
-Register page
+#TASK CHECKLIST
 
-Login page - DONE
+##Done
+- Register page
+- Login page
+- Dashboard
+- Logout functionality
 
-Dashboard/Profile page (protected) - DONE
+##In-Progress
+- Unique/Main features
 
-Logout functionality - DONE
+##TO DO
+- none so far
