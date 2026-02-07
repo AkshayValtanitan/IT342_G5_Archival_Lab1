@@ -1,7 +1,7 @@
 Register page
 
-Login page
+Login page - DONE
 
-Dashboard/Profile page (protected)
+Dashboard/Profile page (protected) - DONE
 
-Logout functionality
+Logout functionality - DONE
