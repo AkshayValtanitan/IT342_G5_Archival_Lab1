@@ -1,7 +1,11 @@
 package com.example.project.controller;
 
+import com.example.project.dto.ApiResponse;
+import com.example.project.dto.AuthRequest;
 import com.example.project.entity.User;
 import com.example.project.repository.UserRepository;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,46 +24,56 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public String register(@RequestParam String username, @RequestParam String password) {
-        if (userRepository.findByUsername(username).isPresent()) {
-            return "Username already exists";
+    public ResponseEntity<ApiResponse> register(@RequestBody AuthRequest request) {
+        String username = request.getUsername();
+        String password = request.getPassword();
+
+        if (username == null || username.trim().isEmpty()) {
+            return ResponseEntity.badRequest()
+                    .body(new ApiResponse(false, "Username is required"));
         }
+        if (password == null || password.length() < 6) {
+            return ResponseEntity.badRequest()
+                    .body(new ApiResponse(false, "Password must be at least 6 characters"));
+        }
+        if (userRepository.findByUsername(username).isPresent()) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(new ApiResponse(false, "Username already exists"));
+        }
+
         User user = new User();
-        user.setUsername(username);
+        user.setUsername(username.trim());
         user.setPassword(passwordEncoder.encode(password));
         userRepository.save(user);
-        return "User registered successfully";
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new ApiResponse(true, "User registered successfully"));
     }
 
     @PostMapping("/login")
-    public String login(@RequestParam String username,
-                        @RequestParam String password,
-                        HttpSession session) {
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+    public ResponseEntity<ApiResponse> login(@RequestBody AuthRequest request,
+                                             HttpSession session) {
+        String username = request.getUsername();
+        String password = request.getPassword();
 
-        if (!passwordEncoder.matches(password, user.getPassword())) {
-            return "Invalid credentials";
+        if (username == null || password == null) {
+            return ResponseEntity.badRequest()
+                    .body(new ApiResponse(false, "Username and password are required"));
+        }
+
+        User user = userRepository.findByUsername(username).orElse(null);
+        if (user == null || !passwordEncoder.matches(password, user.getPassword())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new ApiResponse(false, "Invalid username or password"));
         }
 
         session.setAttribute("username", username);
-        return "Login successful";
+        return ResponseEntity.ok(new ApiResponse(true, "Login successful"));
     }
 
     @PostMapping("/logout")
-    public String logout(HttpSession session) {
+    public ResponseEntity<ApiResponse> logout(HttpSession session) {
         session.invalidate();
-        return "Logged out successfully";
+        return ResponseEntity.ok(new ApiResponse(true, "Logged out successfully"));
     }
-
-    // @GetMapping("/user/me")
-    // public User getMe(HttpSession session) {
-    //     String username = (String) session.getAttribute("username");
-    //     if (username == null) {
-    //         throw new RuntimeException("Not logged in");
-    //     }
-
-    //     return userRepository.findByUsername(username)
-    //             .orElseThrow(() -> new RuntimeException("User not found"));
-    // }
 }

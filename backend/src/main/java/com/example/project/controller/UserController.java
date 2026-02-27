@@ -1,11 +1,14 @@
 package com.example.project.controller;
 
-// import com.example.project.entity.User;
+import com.example.project.dto.ApiResponse;
+import com.example.project.entity.User;
 import com.example.project.repository.UserRepository;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.servlet.http.HttpSession;
-
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/user")
@@ -18,12 +21,24 @@ public class UserController {
     }
 
     @GetMapping("/me")
-    public Object me(HttpSession session) {
+    public ResponseEntity<ApiResponse> me(HttpSession session) {
         String username = (String) session.getAttribute("username");
         if (username == null) {
-            return "You are not logged in";
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new ApiResponse(false, "Not logged in"));
         }
-        return userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        User user = userRepository.findByUsername(username).orElse(null);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ApiResponse(false, "User not found"));
+        }
+
+        // Return only safe fields, never return password
+        Map<String, Object> userData = Map.of(
+                "id", user.getId(),
+                "username", user.getUsername()
+        );
+        return ResponseEntity.ok(new ApiResponse(true, "Success", userData));
     }
 }
