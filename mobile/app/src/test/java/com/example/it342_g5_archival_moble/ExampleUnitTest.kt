@@ -1,4 +1,4 @@
-package com.example.it342_g5_archival_mobile
+package com.example.it342_g5_archival_moble
 
 import org.junit.Test
 

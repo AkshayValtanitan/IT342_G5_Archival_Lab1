@@ -1,5 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.IT342_G5_Archival_Mobile" parent="android:Theme.Material.Light.NoActionBar" />
+    <style name="Theme.IT342_G5_Archival_moble" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">#E94560</item>
+        <item name="colorPrimaryVariant">#C73652</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
+        <item name="colorSecondary">#0F3460</item>
+        <item name="colorOnSecondary">#FFFFFF</item>
+        <item name="android:statusBarColor">#1A1A2E</item>
+        <item name="android:navigationBarColor">#1A1A2E</item>
+    </style>
+
+    <style name="TextInputLayoutTheme" parent="Theme.MaterialComponents.Light">
+        <item name="colorPrimary">#E94560</item>
+        <item name="colorOnSurface">#FFFFFF</item>
+        <item name="colorControlNormal">#4DFFFFFF</item>
+        <item name="colorControlActivated">#E94560</item>
+        <item name="colorControlHighlight">#E94560</item>
+        <item name="android:textColorHint">#99FFFFFF</item>
+    </style>
+
 </resources>

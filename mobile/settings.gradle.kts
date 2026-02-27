@@ -19,6 +19,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "IT342_G5_Archival_Mobile"
+rootProject.name = "IT342_G5_Archival_moble"
 include(":app")
- 

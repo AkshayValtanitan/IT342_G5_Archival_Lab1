@@ -20,14 +20,14 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable())         // disable CSRF for REST API
-            .cors(cors -> {})                     // enable CORS
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/**").permitAll() // allow register/login
-                .anyRequest().permitAll()                     // allow everything else for now
-            )
-            .formLogin(form -> form.disable())
-            .httpBasic(httpBasic -> httpBasic.disable());
+                .csrf(csrf -> csrf.disable())
+                .cors(cors -> {})
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/auth/**").permitAll()
+                        .anyRequest().permitAll()
+                )
+                .formLogin(form -> form.disable())
+                .httpBasic(httpBasic -> httpBasic.disable());
 
         return http.build();
     }
@@ -38,7 +38,11 @@ public class SecurityConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:3000")
+                        .allowedOrigins(
+                                "http://localhost:3000",   // web frontend
+                                "http://10.0.2.2:8080",   // Android emulator
+                                "http://localhost:8080"
+                        )
                         .allowedMethods("*")
                         .allowCredentials(true);
             }
